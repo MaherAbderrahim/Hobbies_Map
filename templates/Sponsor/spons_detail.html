@@ -1,0 +1,11 @@
+{% block content %}
+<h2>{{ sponsor.nom_sponsor }}</h2>
+<p><strong>Description:</strong> {{ sponsor.description_sponsor }}</p>
+<p><strong>Price:</strong> ${{ sponsor.prix_sponsor }}</p>
+<p><strong>Website:</strong> <a href="{{ sponsor.url_site }}" target="_blank">{{ sponsor.url_site }}</a></p>
+<p><strong>Profitability per User:</strong> {{ sponsor.rentabilite_par_user }}</p>
+{% if sponsor.url_photos %}
+    <img src="{{ sponsor.url_photos }}" alt="{{ sponsor.nom_sponsor }}" style="max-width: 200px;">
+{% endif %}
+<a href="{% url 'sponsor_list' %}">Back to List</a>
+{% endblock %}

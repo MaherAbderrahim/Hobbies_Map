@@ -1,0 +1,25 @@
+<h1>Liste des Activités</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Description</th>
+            <th>Prix</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for activity in activities %}
+        <tr>
+            <td>{{ activity.nom_activite }}</td>
+            <td>{{ activity.description_activite }}</td>
+            <td>{{ activity.prix_activite }}</td>
+            <td>
+                <a href="{% url 'act_form' activity.pk %}">Modifier</a> |
+                <a href="{% url 'act_delete' activity.pk %}">Supprimer</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'act_form' %}">Ajouter une activité</a>

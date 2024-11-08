@@ -1,0 +1,9 @@
+
+{% block content %}
+  <h1>{{ event.nom_event }}</h1>
+  <p>{{ event.description_event }}</p>
+  <p>Date: {{ event.date_event }}</p>
+  <p>Prix: {{ event.prix }} €</p>
+  <p><a href="{% url 'event_update' event.id %}">Modifier</a></p>
+  <p><a href="{% url 'event_delete' event.id %}">Supprimer</a></p>
+{% endblock %}

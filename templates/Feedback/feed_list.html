@@ -1,0 +1,14 @@
+
+{% block content %}
+  <h1>Liste des Feedbacks</h1>
+  <a href="{% url 'form' %}">Ajouter un feedback</a>
+  <ul>
+    {% for feedback in feedbacks %}
+      <li>
+        <p>{{ feedback.statut }} - <a href="{% url 'detail' feedback.id %}">Détails</a></p>
+        <a href="{% url 'form' feedback.id %}">Modifier</a>
+        <a href="{% url 'delete' feedback.id %}">Supprimer</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

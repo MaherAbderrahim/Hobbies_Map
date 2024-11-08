@@ -1,0 +1,14 @@
+
+{% block content %}
+  <h1>Articles de Blog</h1>
+  <a href="{% url 'form' %}">Ajouter un article</a>
+  <ul>
+    {% for post in posts %}
+      <li>
+        <a href="{% url 'detail' post.id %}">{{ post.titre }}</a>
+        - <a href="{% url 'form' post.id %}">Modifier</a>
+        - <a href="{% url 'delete' post.id %}">Supprimer</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

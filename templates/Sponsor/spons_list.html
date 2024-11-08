@@ -1,0 +1,28 @@
+{% block content %}
+<h2>Sponsor List</h2>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Website</th>
+        <th>Price</th>
+        <th>Actions</th>
+    </tr>
+    {% for sponsor in sponsors %}
+    <tr>
+        <td>{{ sponsor.nom_sponsor }}</td>
+        <td><a href="{{ sponsor.url_site }}" target="_blank">{{ sponsor.url_site }}</a></td>
+        <td>{{ sponsor.prix_sponsor }}</td>
+        <td>
+            <a href="{% url 'spons_detail' sponsor.id %}">View</a> |
+            <a href="{% url 'spons_form' sponsor.id %}">Edit</a> |
+            <a href="{% url 'spons_delete' sponsor.id %}">Delete</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">No sponsors available.</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'spons_form' %}">Add Sponsor</a>
+{% endblock %}

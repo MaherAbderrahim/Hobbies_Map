@@ -1,0 +1,9 @@
+
+{% block content %}
+  <h1>{% if event %}Modifier{% else %}Ajouter{% endif %} un événement</h1>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer</button>
+  </form>
+{% endblock %}

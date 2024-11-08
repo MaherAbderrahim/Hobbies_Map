@@ -1,0 +1,9 @@
+{% block content %}
+  <h1>Confirmer la suppression de l'activité</h1>
+  <p>Êtes-vous sûr de vouloir supprimer l'activité "{{ activity.nom_activite }}" ?</p>
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit">Supprimer</button>
+    <a href="{% url 'activity_list' %}">Annuler</a>
+  </form>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% block content %}
+  <h1>{{ activity.nom_activite }}</h1>
+  <p>{{ activity.description_activite }}</p>
+  <p>Prix: {{ activity.prix_activite }} €</p>
+  <p>Localisation: {{ activity.localisation }}</p>
+  <p>Note Moyenne: {{ activity.note_moyenne }}</p>
+  <p><a href="{% url 'activity_update' activity.id %}">Modifier</a></p>
+  <p><a href="{% url 'activity_delete' activity.id %}">Supprimer</a></p>
+{% endblock %}

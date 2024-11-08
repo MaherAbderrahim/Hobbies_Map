@@ -1,0 +1,10 @@
+
+{% block content %}
+  <h1>Confirmer la suppression de l'événement</h1>
+  <p>Êtes-vous sûr de vouloir supprimer l'événement "{{ event.nom_event }}" ?</p>
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit">Supprimer</button>
+    <a href="{% url 'event_list' %}">Annuler</a>
+  </form>
+{% endblock %}

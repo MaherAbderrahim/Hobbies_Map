@@ -1,0 +1,14 @@
+
+{% block content %}
+  <h1>Liste des Événements</h1>
+  <a href="{% url 'form' %}">Ajouter un événement</a>
+  <ul>
+    {% for event in events %}
+      <li>
+        <a href="{% url 'event_detail' event.id %}">{{ event.nom_event }}</a>
+        - <a href="{% url 'form' event.id %}">Modifier</a>
+        - <a href="{% url 'event_delete' event.id %}">Supprimer</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
