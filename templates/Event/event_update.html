@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Event</title>
+    <link rel="stylesheet" href="{% static 'your_css_file.css' %}"> <!-- Link to your CSS file if needed -->
+</head>
+<body>
+    <h2>Update Event</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update Event</button>
+    </form>
+    <a href="{% url 'event_list' %}">Cancel</a> <!-- Adjust URL name if necessary -->
+</body>
+</html>
