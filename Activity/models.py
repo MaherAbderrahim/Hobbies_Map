@@ -1,5 +1,5 @@
 from django.db import models
-from Utilisateur.models import User
+from Utilisateur.models import Utilisateur
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
@@ -19,13 +19,13 @@ class Activity(models.Model):
     note_moyenne = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(5)])
     icone_map = models.CharField(max_length=255)
     categorie = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="activites")
-    #reservation = models.ManyToManyField(User, through="User_Activity", related_name="act")
+    #reservation = models.ManyToManyField(Utilisateur, through="User_Activity", related_name="act")
 
     def __str__(self):
         return self.nom_activite
 
 class User_Activity(models.Model):
-    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE)
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
     note = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(5)])
 
@@ -46,7 +46,7 @@ class Image_Activity(models.Model):
 class Comment_Act(models.Model):
     text_comm = models.TextField()
     is_ban = models.BooleanField(default=False)
-    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE)
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
 
     def __str__(self):

@@ -1,4 +1,4 @@
-from Utilisateur.models import User
+from Utilisateur.models import Utilisateur
 from django.db import models
 
 class Event(models.Model):
@@ -7,13 +7,13 @@ class Event(models.Model):
     date_event = models.DateTimeField()
     prix = models.DecimalField(max_digits=10, decimal_places=2)
     nombre_places_disponibles = models.IntegerField()
-    #u_event=models.ManyToManyField(User, through="User_Event", related_name="eve")
+    #u_event=models.ManyToManyField(Utilisateur, through="User_Event", related_name="eve")
 
     def __str__(self):
         return self.nom_event
 
 class User_Event(models.Model):
-    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE)
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     nombre_places_achete = models.IntegerField()
     prix = models.DecimalField(max_digits=10, decimal_places=2)

@@ -1,15 +1,23 @@
 from django import forms
-from .models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import Utilisateur
 
-class RegisterForm(forms.ModelForm):
+class UtilisateurCreationForm(UserCreationForm):
     class Meta:
-        model = User
-        fields = ['nom_user', 'prenom_user', 'email_user', 'is_premium_user']  # Ajoute les champs nécessaires
+        model = Utilisateur
+        fields = ['first_name', 'last_name', 'email', 'is_premium_user']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'input-field', 'placeholder': 'Firstname'}),
+            'last_name': forms.TextInput(attrs={'class': 'input-field', 'placeholder': 'Lastname'}),
+            'email': forms.EmailInput(attrs={'class': 'input-field', 'placeholder': 'Email'}),
+            'password' : forms.PasswordInput(attrs={'class': 'input-field', 'placeholder': 'Password'}),
+        }
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        print(user)
-        user.set_password(self.cleaned_data['password'])  # Hash le mot de passe
-        if commit:
-            user.save()
-        return user
+class UtilisateurLoginForm(AuthenticationForm):
+    username = forms.EmailField(
+        label="Email",
+        widget=forms.EmailInput(attrs={'class': 'input-field', 'placeholder': 'Email'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'input-field', 'placeholder': 'Password'})
+    )
