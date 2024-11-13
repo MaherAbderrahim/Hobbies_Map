@@ -1,0 +1,192 @@
+/* POPPINS FONT */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: url("images/background.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: rgba(39, 39, 39, 0.4);
+}
+
+.form-box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 512px;
+    height: 420px;
+    overflow: hidden;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 40px 20px;
+}
+.form2-box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 512px;
+    height: 580px;
+    overflow: hidden;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 40px 20px;
+}
+
+.register-container,.login-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height:100%;
+}
+
+.top span {
+    color: #fff;
+    font-size: small;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.top span a {
+    font-weight: 500;
+    color: #fff;
+    margin-left: 5px;
+}
+
+header {
+    color: #fff;
+    font-size: 30px;
+    text-align: center;
+    padding: 10px 0 30px 0;
+}
+
+.input-box {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+    align-items: center;
+    border-radius: 30px;
+    padding-left: 0px;
+}
+
+.icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #010000;
+    font-size: 24px;
+}
+
+.input-field {
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.2); /* Light transparent background */
+    color: #fff; /* White text for contrast */
+    height: 50px;
+    width: 100%;
+    padding-left: 50px; /* Space for the icon */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Light border with transparency */
+    border-radius: 25px; /* Full rounded corners */
+    outline: none;
+    transition: background 0.3s ease, border-color 0.3s ease; /* Smooth transition for hover/focus */
+}
+
+/* Style for placeholder text */
+.input-field::placeholder {
+    color: rgba(255, 255, 255, 0.6); /* Lighter placeholder color */
+}
+
+/* Hover and focus effects */
+.input-field:hover,
+.input-field:focus {
+    background: rgba(255, 255, 255, 0.3); /* Slightly darker background on hover/focus */
+    border-color: rgba(255, 255, 255, 0.8); /* Brighter border on focus or hover */
+}
+
+/* Optional: Focus effect for better visibility */
+.input-field:focus {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8); /* Light shadow effect when focused */
+}
+
+.submit {
+    font-size: 15px;
+    font-weight: 500;
+    color: black;
+    height: 45px;
+    width: 100%;
+    border: none;
+    border-radius: 30px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: .3s ease-in-out;
+}
+
+.submit:hover {
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 1px 5px 7px 1px rgba(0, 0, 0, 0.2);
+}
+
+.two-col {
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    color: #fff;
+    font-size: small;
+    margin-top: 10px;
+}
+
+.input-box input[type="text"],
+.input-box input[type="password"],
+.input-box input[type="email"],
+.input-box .input-field {
+    width: 100%;
+    padding: 10px;
+    padding-left: 50px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+}
+.input-box i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #888;
+}
+.two-col input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .register-container, .login-container {
+        padding: 1rem;
+        width: 90%;
+    }
+}

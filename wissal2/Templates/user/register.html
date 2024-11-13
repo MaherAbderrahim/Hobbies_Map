@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>> <!-- Assuming you have a CSS file for styling -->
+    <title>Register</title>
+</head>
+<body>
+<div class="wrapper">
+    <div class="form2-box">
+    <div class="register-container">
+        <div class="top">
+            <span>Have an account? <a href="{% url 'login' %}">Login</a></span>
+            <header>Sign Up</header>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="two-forms">
+                <!-- First Name input -->
+                <div class="input-box">
+                    <i class="bx bx-user"></i>
+                    {{ form.first_name }}
+                </div>
+                <!-- Last Name input -->
+                <div class="input-box">
+                    <i class="bx bx-user"></i>
+                    {{ form.last_name }}
+                </div>
+            </div>
+            
+            <!-- Email input -->
+            <div class="input-box">
+                <i class="bx bx-envelope"></i>
+                {{ form.email}}
+            </div>
+
+            <!-- Password input -->
+            <div class="input-box" id="password1">
+                <i class="bx bx-lock-alt"></i>
+                <input type="password" name="password1" value="{{ form.password1.value }}" class="input-field" placeholder="Password">
+            </div>
+
+            <!-- Submit button -->
+            <div class="input-box">
+                <input type="submit" class="submit" value="Register">
+            </div>
+
+            <div class="two-col">
+                <!-- Remember me checkbox -->
+                <div class="one">
+                    <input type="checkbox" id="register-check">
+                    <label for="register-check"> Remember Me</label>
+                </div>
+                <!-- Terms and conditions link -->
+                <div class="two">
+                    <label><a href="#">Terms & conditions</a></label>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
