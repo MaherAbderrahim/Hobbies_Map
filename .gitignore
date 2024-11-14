@@ -1,0 +1,14 @@
+# Fichiers et dossiers de l'environnement virtuel
+venv/
+env/
+.env
+
+# Fichiers de base de données SQLite
+*.sqlite3
+
+# Dossiers de migrations Django
+*/migrations/
+
+# Fichiers de cache
+*.pyc
+__pycache__/
