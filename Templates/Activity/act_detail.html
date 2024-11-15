@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de l'Activité</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/act_detail.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="detail-header">
+                <h2><i class="fas fa-info-circle"></i> {{ activity.nom_activite }}</h2>
+            </div>
+            <div class="card-body">
+                <p><i class="fas fa-align-left"></i> {{ activity.description_activite }}</p>
+                <p><i class="fas fa-euro-sign"></i> Prix: {{ activity.prix_activite }} €</p>
+                <p><i class="fas fa-map-marker-alt"></i> Localisation: {{ activity.localisation }}</p>
+                <div class="btn-group">
+                    <a href="{% url 'act_form' pk=activity.pk %}" class="btn btn-secondary"><i class="fas fa-edit"></i> Modifier</a>
+                    <a href="{% url 'act_delete' pk=activity.pk %}" class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

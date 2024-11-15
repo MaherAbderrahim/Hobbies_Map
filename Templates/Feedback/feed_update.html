@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Hobbies Map</title>
+  {% load static %}
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="{% static 'img/favicon.png' %}" rel="icon">
+  <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+</head>
+
+<body class="home-page">
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+      <a href="{% url 'user:home' %}" class="logo d-flex align-items-center me-auto">
+        <h1 class="sitename">Hobbies Map</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="{% url 'user:home' %}" class="active">Home</a></li>
+          <li><a href="{% url 'user:feedback' %}">Feedback</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+      <a class="btn-getstarted" href="{% url 'user:logout' %}">Logout</a>
+    </div>
+  </header>
+
+<main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section dark-background">
+      <img src="{% static 'img/world-dotted-map.png' %}" alt="" class="hero-bg" data-aos="fade-in">
+      <div class="container">
+        <div class="row gy-4 d-flex justify-content-between">
+          <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+            <h2> Update Your Feedback</h2>
+            <h4>Please make changes to your feedback below.</h4>
+         </div>
+          <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
+            <img src="{% static 'img/hero-img.svg' %}" class="img-fluid mb-3 mb-lg-0" alt="">
+          </div>
+        </div>
+      </div>
+    </section><!-- /Hero Section -->
+
+    <!-- Feedback Update Form Section -->
+    <section id="feedback-form" class="feedback-form section">
+        <div class="container">
+            <form method="POST" action="{% url 'feedback_update' feedback.id %}" data-aos="fade-up" data-aos-delay="200">
+                {% csrf_token %}
+                
+                <!-- Debugging output to check feedback object -->
+                <p>Feedback: {{ feedback }}</p> <!-- This will help verify if feedback is passed correctly -->
+                
+                <div class="row gy-4">
+                    <!-- Status -->
+                    <div class="col-lg-6 col-md-12">
+                        <label for="statut" class="form-label">Status</label>
+                        <select id="statut" name="statut" class="form-control" required>
+                            <option value="open" {% if feedback.statut == 'open' %}selected{% endif %}>Open</option>
+                            <option value="in_progress" {% if feedback.statut == 'in_progress' %}selected{% endif %}>In Progress</option>
+                            <option value="closed" {% if feedback.statut == 'closed' %}selected{% endif %}>Closed</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Feedback Type -->
+                    <div class="col-lg-6 col-md-12">
+                        <label for="feedback_type" class="form-label">Feedback Type</label>
+                        <select id="feedback_type" name="feedback_type" class="form-control" required>
+                            <option value="general" {% if feedback.feedback_type == 'general' %}selected{% endif %}>General Feedback</option>
+                            <option value="suggestion" {% if feedback.feedback_type == 'suggestion' %}selected{% endif %}>Suggestion</option>
+                            <option value="issue" {% if feedback.feedback_type == 'issue' %}selected{% endif %}>Issue</option>
+                        </select>
+                    </div>
+    
+                    <!-- Feedback Description -->
+                    <div class="col-lg-6 col-md-12">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea id="description" name="description_feedback" rows="4" class="form-control" placeholder="Please describe your feedback" required>{{ feedback.description_feedback }}</textarea>
+                    </div>
+    
+                    <!-- Need Admin Attention -->
+                    <div class="col-lg-6 col-md-12">
+                        <label for="need_admin" class="form-label">Need Admin Attention</label>
+                        <select id="need_admin" name="need_admin" class="form-control" required>
+                            <option value="yes" {% if feedback.need_admin == 'yes' %}selected{% endif %}>Yes</option>
+                            <option value="no" {% if feedback.need_admin == 'no' %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+    
+                    <!-- Buttons -->
+                    <div class="col-lg-6 col-md-12">
+                        <button type="submit" class="btn btn-primary w-100">Update Feedback</button>
+                    </div>
+                    <div class="col-lg-6 col-md-12">
+                        <!-- Cancel Button -->
+                        <button type="button" class="btn btn-secondary w-100" onclick="window.history.back();">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+    
+</main>
+
+  <footer id="footer" class="footer dark-background">
+    <div class="container footer-top">
+        <div class="row gy-4">
+            <div class="col-lg-5 col-md-12 footer-about">
+                <a href="{% url 'user:home' %}" class="logo d-flex align-items-center">
+                    <span class="sitename">Hobbies Map</span>
+                </a>
+                <p>HobbiesMAP is a collaborative platform where users can discover and share exciting activities around the world. Join us in exploring and contributing to a community-driven map of activities!</p>
+                <div class="social-links d-flex mt-4">
+                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                    <a href=""><i class="bi bi-facebook"></i></a>
+                    <a href=""><i class="bi bi-instagram"></i></a>
+                    <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-6 footer-links">
+                <h4>Useful Links</h4>
+                <ul>
+                    <li><a href="{% url 'user:home' %}">Home</a></li>
+                    <li><a href="#">About us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Terms of service</a></li>
+                    <li><a href="#">Privacy policy</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-6 footer-links">
+                <h4>Our Services</h4>
+                <ul>
+                    <li><a href="#">Web Design</a></li>
+                    <li><a href="#">Web Development</a></li>
+                    <li><a href="#">Product Management</a></li>
+                    <li><a href="#">Marketing</a></li>
+                    <li><a href="#">Graphic Design</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-12 footer-contact">
+                <h4>Contact Us</h4>
+                <p><i class="bi bi-geo-alt"></i> 1234 Some Street, Some City, Country</p>
+                <p><i class="bi bi-envelope"></i> support@hobbiesmap.com</p>
+                <p><i class="bi bi-phone"></i> +1 234 567 890</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container">
+            <p>&copy; 2024 HobbiesMAP. All Rights Reserved</p>
+        </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire d'Activité</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/act_form.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        .location-display {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+            min-height: 40px;
+        }
+
+        .location-container {
+            margin-bottom: 20px;
+        }
+
+        .location-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="form-container">
+                    <div class="card">
+                        <h2 class="text-center mb-4"><i class="fas fa-edit"></i> {% if activity %}Modifier{% else %}Ajouter{% endif %} une activité</h2>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row">
+
+                                <!-- Other form fields -->
+                                {% for field in form %}
+                                    {% if field.name != 'localisation' and field.name != 'categorie' %}
+                                        <div class="mb-3">
+                                            {{ field.label_tag }}
+                                            {{ field }}
+                                            {% if field.errors %}
+                                                <div class="text-danger">{{ field.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <!-- Category field -->
+                                <div class="mb-3">
+                                    {{ form.categorie.label_tag }}
+                                    {{ form.categorie }}
+                                    {% if form.categorie.errors %}
+                                        <div class="text-danger">{{ form.categorie.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Location section -->
+                                <div class="location-container">
+                                    <div class="location-label">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        Localisation
+                                    </div>
+                                    <div class="location-display" id="locationDisplay">
+                                        Cliquez sur la carte pour sélectionner un emplacement
+                                    </div>
+                                    {{ form.localisation.as_hidden }}
+                                    <div id="map"></div>
+                                </div>>
+                                <!-- Submit button -->
+                                <div class="col-12 text-center mt-4">
+                                    <a href="{% url 'act_list' %}" class="btn btn-secondary"><i class="fas fa-times"></i> Annuler </a>
+                                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const categorySelect = document.querySelector('[name="categorie"]');
+        const localisationField = document.querySelector('[name="localisation"]');
+        const locationDisplay = document.getElementById('locationDisplay');
+
+        var map = L.map('map').setView([46.603354, 1.888334], 6);
+        var marker = null;
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        function fetchLocationDetails(lat, lng) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    let address = [];
+                    
+                    if (data.address.house_number) address.push(data.address.house_number);
+                    if (data.address.road) address.push(data.address.road);
+                    if (data.address.city || data.address.town || data.address.village) {
+                        address.push(data.address.city || data.address.town || data.address.village);
+                    }
+                    if (data.address.postcode) address.push(data.address.postcode);
+                    if (data.address.state) address.push(data.address.state);
+                    if (data.address.country) address.push(data.address.country);
+
+                    const formattedAddress = address.join(', ');
+                    locationDisplay.textContent = formattedAddress;
+                    localisationField.value = formattedAddress;
+                })
+                .catch(error => {
+                    console.error('Error fetching location details:', error);
+                });
+        }
+
+        map.on('click', function(e) {
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            marker = L.marker(e.latlng).addTo(map);
+            fetchLocationDetails(e.latlng.lat, e.latlng.lng);
+        });
+    </script>
+</body>
+</html>

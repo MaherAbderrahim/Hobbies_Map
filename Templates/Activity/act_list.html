@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Activités</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/act_list.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-list-ul"></i> Liste des Activités</h1>
+        <a href="{% url 'act_form' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Ajouter une activité</a>
+        <table class="activity-list">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Categorie</th>
+                    <th>Description</th>
+                    <th>Prix</th>
+                    <th>Localisation</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in activities %}
+                <tr>
+                    <td>{{ activity.nom_activite }}</td>
+                    <td>{{ activity.categorie}}</td>
+                    <td>{{ activity.description_activite }}</td>
+                    <td>{{ activity.prix_activite }} €</td>
+                    <td>{{ activity.localisation }}</td>
+                    <td>
+                        <a href="{% url 'act_form' pk=activity.pk %}" class="btn btn-secondary"><i class="fas fa-edit"></i> Modifier</a>
+                        <a href="{% url 'act_delete' pk=activity.pk %}" class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

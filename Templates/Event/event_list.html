@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <title>Liste des Événements</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'css/main.css' %}" rel="stylesheet">
+
+  <style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    .content-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    footer {
+        background-color: #2338FA;
+        padding: 20px 0;
+        color: white;
+        position: relative;
+        width: 100%;
+    }
+    .footer-top {
+        padding: 20px 0;
+    }
+    footer a {
+        color: white;
+        text-decoration: none;
+    }
+    footer h4 {
+        color: white;
+    }
+    .mt-auto {
+        margin-top: auto;
+    }
+  </style>
+</head>
+<body class="w3-theme-l5">
+
+<!-- Navbar -->
+<header id="header" class="header d-flex align-items-center fixed-top" style="background-color: #2338FA; height: 60px;">
+  <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+    <a href="{% url 'user:home' %}" class="logo d-flex align-items-center">
+      <h1 class="sitename">Hobbies Map</h1>
+    </a>
+    <nav id="navmenu" class="navmenu">
+      <ul class="d-flex list-unstyled">
+        <li><a href="{% url 'user:home' %}" class="active">Home</a></li>
+        <li><a href="{% url 'user:feedback' %}">Feedback</a></li>
+        <li><a href="{% url 'list' %}">Blog</a></li>
+        <li><a href="{% url 'spons_list' %}">Sponsors</a></li>
+        <li><a href="{%url 'event_list' %}">Events</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-light" href="{% url 'user:logout' %}">Logout</a>
+  </div>
+</header>
+
+<!-- Content Wrapper -->
+<div class="content-wrapper">
+  <!-- Page Container -->
+  <div class="w3-container w3-content" style="max-width: 1200px; margin-top: 100px;">
+    <!-- Events Section -->
+    <div class="w3-card w3-round w3-white w3-padding">
+      <h1 class="w3-center" style="font-weight: bold; font-size: 1.8rem; color: #2338FA;">Liste des Événements</h1>
+      
+      <!-- Add Event Button -->
+      <div class="text-center mb-4">
+        <a href="{% url 'event_form' %}" class="btn btn-primary btn-lg">Ajouter un événement</a>
+      </div>
+      
+      <!-- Events List -->
+      <ul class="list-group">
+        {% for event in events %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <i class="fa fa-calendar-check-o fa-fw w3-margin-right w3-text-theme"></i>
+            <a href="{% url 'event_detail' event.id %}" class="text-decoration-none">{{ event.nom_event }}</a>
+          </div>
+          <div>
+            <a href="{% url 'event_update' event.id %}" class="btn btn-warning btn-sm mx-1">Modifier</a>
+            <a href="{% url 'event_delete' event.id %}" class="btn btn-danger btn-sm">Supprimer</a>
+          </div>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-center">Aucun événement disponible.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer id="footer" class="footer dark-background mt-auto">
+    <div class="container footer-top">
+        <div class="row gy-4">
+            <div class="col-lg-5 col-md-12 footer-about">
+                <a href="{% url 'user:home' %}" class="logo d-flex align-items-center">
+                    <span class="sitename">Hobbies Map</span>
+                </a>
+                <p>HobbiesMAP is a collaborative platform where users can discover and share exciting activities around the world. Join us in exploring and contributing to a community-driven map of activities!</p>
+                <div class="social-links d-flex mt-4">
+                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                    <a href=""><i class="bi bi-facebook"></i></a>
+                    <a href=""><i class="bi bi-instagram"></i></a>
+                    <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-6 footer-links">
+                <h4>Useful Links</h4>
+                <ul>
+                    <li><a href="{% url 'user:home' %}">Home</a></li>
+                    <li><a href="#">About us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Terms of service</a></li>
+                    <li><a href="#">Privacy policy</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-6 footer-links">
+                <h4>Our Services</h4>
+                <ul>
+                    <li><a href="#">Web Design</a></li>
+                    <li><a href="#">Web Development</a></li>
+                    <li><a href="#">Product Management</a></li>
+                    <li><a href="#">Marketing</a></li>
+                    <li><a href="#">Graphic Design</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
+                <h4>Contact Us</h4>
+                <p>Ariana Soghra, Tunisia</p>
+                <p>Tunisia</p>
+                <p class="mt-4"><strong>Phone:</strong> <span>+216 70 528 759</span></p>
+                <p><strong>Email:</strong> <span>info@hobbiesmap.tn</span></p>
+            </div>
+        </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Include Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
