@@ -45,6 +45,7 @@
           <li><a href="{% url 'list' %}">Blog</a></li>
           <li><a href="{% url 'spons_list' %}">Sponsors</a></li>
           <li><a href="{%url 'event_list' %}">Events</a></li>
+          <li><a href="{%url 'act_list' %}">Activities</a></li>
 
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -56,90 +57,100 @@
     <section id="hero" class="hero section dark-background">
         <img src="{% static 'img/world-dotted-map.png' %}" alt="" class="hero-bg" data-aos="fade-in">
         <div class="container">
-          <div class="row gy-4 d-flex justify-content-between">
-            <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
-              <h2> Check your sponsor</h2>
-              <h4>
-                We value our sponsors' contributions! Please fill in the form below to share your collaboration ideas, sponsorship inquiries, or any feedback you may have.</h4>
-           </div>
-            <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
-              <img src="{% static 'img/sponsor.png' %}" class="img-fluid mb-3 mb-lg-0" alt="">
+            <div class="row gy-4 d-flex justify-content-between">
+                <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+                    <h2> Check your sponsor</h2>
+                    <h4>
+                        We value our sponsors' contributions! Please fill in the form below to share your collaboration ideas, sponsorship inquiries, or any feedback you may have.
+                    </h4>
+                </div>
+                <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
+                    <img src="{% static 'img/sponsor.png' %}" class="img-fluid mb-3 mb-lg-0" alt="">
+                </div>
             </div>
-          </div>
         </div>
-      </section><!-- /Hero Section -->
+    </section><!-- /Hero Section -->
 
-      <section id="sponsors" class="services section">
+    <section id="sponsors" class="services section">
         <!-- Section Title -->
         <div class="container section-title" data-aos="fade-up">
-          <span>Nos Sponsors</span>
-          <h2>Liste des Sponsors</h2>
-          <p>Découvrez nos partenaires et sponsors qui nous soutiennent.</p>
+            <span>Nos Sponsors</span>
+            <h2>Liste des Sponsors</h2>
+            <p>Découvrez nos partenaires et sponsors qui nous soutiennent.</p>
         </div>
         <!-- End Section Title -->
-      
+
         <div class="container">
-          <div class="row gy-4">
-            {% for sponsor in sponsors %}
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:100 }}">
-              <div class="card">
-                  <!-- Image cliquable vers l'URL de l'image -->
-                  <div class="card-img" style="display: flex; justify-content: center; align-items: center; height: 200px; overflow: hidden;">
-                      <a href="{{ sponsor.url_photos }}" target="_blank">
-                          <img 
-                              src="{{ sponsor.url_photos }}" 
-                              alt="{{ sponsor.nom_sponsor }}" 
-                              class="img-fluid" 
-                              style="max-width: 100%; max-height: 100%; object-fit: cover; display: block;">
-                      </a>
-                  </div>
-          
-                  <!-- Nom cliquable vers le site du sponsor -->
-                  <div class="card-body">
-                      <h3 style="text-align: center;">
-                          <a href="{{ sponsor.url_site }}" target="_blank" style="text-decoration: none; color: #007bff;">
-                              {{ sponsor.nom_sponsor }}
-                          </a>
-                      </h3>
-                      <p style="text-align: center;">Prix : {{ sponsor.prix_sponsor }} €</p>
-          
-                      <!-- Boutons d'action (Détail, Modifier, Supprimer) -->
-                      <div class="btn-group" style="display: flex; gap: 5px; justify-content: center; margin-top: 10px;">
-                          <a href="{% url 'spons_detail' sponsor.id %}" 
-                             class="btn btn-outline-primary btn-sm" 
-                             style="padding: 5px 10px; border-radius: 5px; font-size: 14px;">
-                             Détail
-                          </a>
-                          <a href="{% url 'spons_form' sponsor.id %}" 
-                             class="btn btn-outline-warning btn-sm" 
-                             style="padding: 5px 10px; border-radius: 5px; font-size: 14px;">
-                             Modifier
-                          </a>
-                          <a href="{% url 'spons_delete' sponsor.id %}" 
-                             class="btn btn-outline-danger btn-sm" 
-                             style="padding: 5px 10px; border-radius: 5px; font-size: 14px;">
-                             Supprimer
-                          </a>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          
-            <!-- End Card Item -->
-            {% empty %}
-            <div class="col-12">
-              <p class="text-center">Aucun sponsor disponible pour le moment.</p>
+            <!-- Barre de recherche et filtre -->
+            <form method="GET" class="mb-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" name="search" placeholder="Rechercher par nom" value="{{ search_query }}" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <input type="number" name="price" placeholder="Filtrer par prix max" value="{{ price_filter }}" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary">Rechercher</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="row gy-4">
+                {% for sponsor in sponsors %}
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:100 }}">
+                    <div class="card">
+                        <div class="card-img" style="display: flex; justify-content: center; align-items: center; height: 200px; overflow: hidden;">
+                            <a href="{{ sponsor.url_photos }}" target="_blank">
+                                <img 
+                                    src="{{ sponsor.url_photos }}" 
+                                    alt="{{ sponsor.nom_sponsor }}" 
+                                    class="img-fluid" 
+                                    style="max-width: 100%; max-height: 100%; object-fit: cover; display: block;">
+                            </a>
+                        </div>
+
+                        <div class="card-body">
+                            <h3 style="text-align: center;">
+                                <a href="{{ sponsor.url_site }}" target="_blank" style="text-decoration: none; color: #007bff;">
+                                    {{ sponsor.nom_sponsor }}
+                                </a>
+                            </h3>
+                            <p style="text-align: center;">Prix : {{ sponsor.prix_sponsor }} €</p>
+
+                            <div class="btn-group" style="display: flex; gap: 5px; justify-content: center; margin-top: 10px;">
+                                <a href="{% url 'spons_detail' sponsor.id %}" 
+                                   class="btn btn-outline-primary btn-sm" 
+                                   style="padding: 5px 10px; border-radius: 5px; font-size: 14px;">
+                                   Détail
+                                </a>
+                                <a href="{% url 'spons_form' sponsor.id %}" 
+                                   class="btn btn-outline-warning btn-sm" 
+                                   style="padding: 5px 10px; border-radius: 5px; font-size: 14px;">
+                                   Modifier
+                                </a>
+                                <a href="{% url 'spons_delete' sponsor.id %}" 
+                                   class="btn btn-outline-danger btn-sm" 
+                                   style="padding: 5px 10px; border-radius: 5px; font-size: 14px;">
+                                   Supprimer
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-center">Aucun sponsor disponible pour le moment.</p>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-          </div>
         </div>
-      
+
         <div class="container text-center mt-4">
-          <a href="{% url 'spons_form' %}" class="btn btn-primary">Ajouter un Sponsor</a>
+            <a href="{% url 'spons_form' %}" class="btn btn-primary">Ajouter un Sponsor</a>
         </div>
-      </section>
-      
-    </main>
+    </section>
+</main>
 <footer id="footer" class="footer dark-background">
     <div class="container footer-top">
         <div class="row gy-4">

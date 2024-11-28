@@ -69,50 +69,81 @@
     </section><!-- /Hero Section -->
 
     <!-- Feedback Form Section -->
-    <section id="feedback-form" class="feedback-form section">
-        <div class="container">
-         <form method="POST" action="{% url 'feedback_create' %}" data-aos="fade-up" data-aos-delay="200">
-                {% csrf_token %}
-                <div class="row gy-4">
-                    <div class="col-lg-6 col-md-12">
-                        <label for="statut" class="form-label">Status</label>
-                        <select id="statut" name="statut" class="form-control" required>
-                            <option value="open">Open</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="closed">Closed</option>
-                        </select>
-                    </div>                    
-                    
-                    <!-- Feedback Type -->
-                    <div class="col-lg-6 col-md-12">
-                        <label for="feedback_type" class="form-label">Feedback Type</label>
-                        <select id="feedback_type" name="feedback_type" class="form-control" required>
-                            <option value="general">General Feedback</option>
-                            <option value="suggestion">Suggestion</option>
-                            <option value="issue">Issue</option>
-                        </select>
-                    </div>
-                    <!-- Feedback Description -->
-                    <div class="col-lg-6 col-md-12">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea id="description" name="description_feedback" rows="4" class="form-control" placeholder="Please describe your feedback" required></textarea>
-                    </div>
-                    <!-- Need Admin Attention -->
-                    <div class="col-lg-6 col-md-12">
-                        <label for="need_admin" class="form-label">Need Admin Attention</label>
-                        <select id="need_admin" name="need_admin" class="form-control" required>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                    <!-- Submit Button -->
-                    <div class="col-lg-6 col-md-12">
-                        <button type="submit" class="btn btn-primary w-100">Submit Feedback</button>
-                    </div>
-                </div>
-            </form>
+    <form method="POST" action="{% url 'feedback:feedback_create' %}" data-aos="fade-up" data-aos-delay="200">
+      {% csrf_token %}
+      <div class="row gy-4">
+          <!-- Status -->
+          <div class="col-lg-6 col-md-12">
+              <label for="status" class="form-label">Status</label>
+              {{ form.status }}
+          </div>
+          
+          <!-- Feedback Type -->
+          <div class="col-lg-6 col-md-12">
+              <label for="feedback_type" class="form-label">Feedback Type</label>
+              {{ form.feedback_type }}
+          </div>
+          
+          <!-- Feedback Description -->
+          <div class="col-lg-6 col-md-12">
+              <label for="description_feedback" class="form-label">Description</label>
+              {{ form.description_feedback }}
+          </div>
+          
+          <!-- Need Admin Attention -->
+          <div class="col-lg-6 col-md-12">
+              <label for="need_admin" class="form-label">Need Admin Attention</label>
+              {{ form.need_admin }}
+          </div>
+          
+          <!-- Rating -->
+          <div class="col-lg-6 col-md-12">
+            <label for="rating" class="form-label">Rating</label>
+            <div id="rating-stars">
+                {% for i in rating_range %}
+                    <label>
+                        <input type="radio" name="rating" value="{{ i }}" 
+                               class="star-input" 
+                               {% if form.rating.value|stringformat:"d" == i|stringformat:"d" %}checked{% endif %}>
+                        <span class="star" data-value="{{ i }}">&#9733;</span>
+                    </label>
+                {% endfor %}
+            </div>
         </div>
-    </section>
+        
+
+<!-- Add CSS for star style -->
+<style>
+  #rating-stars {
+      display: flex;
+      gap: 5px;
+  }
+  #rating-stars .star {
+      font-size: 24px;
+      color: lightgray;
+      cursor: pointer;
+  }
+  #rating-stars input[type="radio"] {
+      display: none; /* Hide the radio buttons */
+  }
+  #rating-stars .star:hover,
+  #rating-stars .star:hover ~ .star {
+      color: gold;
+  }
+  #rating-stars input[type="radio"]:checked + .star {
+      color: gold;
+  }
+</style>
+
+
+          
+          <!-- Submit Button -->
+          <div class="col-lg-6 col-md-12">
+              <button type="submit" class="btn btn-primary w-100">Submit Feedback</button>
+          </div>
+      </div>
+  </form>
+  
     
 
   </main>
