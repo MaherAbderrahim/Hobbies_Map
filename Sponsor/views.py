@@ -1,6 +1,9 @@
+from io import BytesIO
+import qrcode
+import base64
+from django.core.files.base import ContentFile
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import user_passes_test
-from django.urls import reverse_lazy
 from .models import Sponsor
 from .forms import SponsorForm
 
@@ -15,11 +18,22 @@ def sponsor_list(request):
     sponsors = Sponsor.objects.all()
     return render(request, 'Sponsor/spons_list.html', {'sponsors': sponsors})
 
-# Détail d'un sponsor
+from io import BytesIO  # Assurez-vous d'importer BytesIO
+
 @superuser_required
 def sponsor_detail(request, pk):
     sponsor = get_object_or_404(Sponsor, pk=pk)
-    return render(request, 'Sponsor/spons_details.html', {'sponsor': sponsor})
+
+    # Générer le QR code
+    qr_data = sponsor.url_site
+    qr_code_img = qrcode.make(qr_data)
+
+    # Convertir le QR code en base64 pour l'afficher dans le template
+    buffered = BytesIO()
+    qr_code_img.save(buffered, format="PNG")
+    qr_code_base64 = "data:image/png;base64," + base64.b64encode(buffered.getvalue()).decode()
+
+    return render(request, 'Sponsor/spons_details.html', {'sponsor': sponsor, 'qr_code_base64': qr_code_base64})
 
 # Création d'un sponsor
 @superuser_required

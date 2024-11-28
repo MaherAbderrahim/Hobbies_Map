@@ -69,28 +69,33 @@
 
   <!-- Contenu principal -->
   {% block content %}
-  <main class="main">
-    <section id="view-sponsor" class="section">
-      <div class="container" style="max-width: 800px;">
-        <div class="card text-center" data-aos="fade-up">
-          <div class="card-body">
-            <h2 class="mb-4">{{ sponsor.nom_sponsor }}</h2>
-            <p><strong>Description:</strong> {{ sponsor.description_sponsor }}</p>
-            <p><strong>Price:</strong> ${{ sponsor.prix_sponsor }}</p>
-            <p><strong>Website:</strong> <a href="{{ sponsor.url_site }}" target="_blank">{{ sponsor.url_site }}</a></p>
-            <p><strong>Profitability per User:</strong> {{ sponsor.rentabilite_par_user }}</p>
+<main class="main">
+  <section id="view-sponsor" class="section">
+    <div class="container" style="max-width: 800px;">
+      <div class="card text-center" data-aos="fade-up">
+        <div class="card-body">
+          <h2 class="mb-4">{{ sponsor.nom_sponsor }}</h2>
+          <p><strong>Description:</strong> {{ sponsor.description_sponsor }}</p>
+          <p><strong>Price:</strong> ${{ sponsor.prix_sponsor }}</p>
+          <p><strong>Website:</strong> <a href="{{ sponsor.url_site }}" target="_blank">{{ sponsor.url_site }}</a></p>
+          <p><strong>Profitability per User:</strong> {{ sponsor.rentabilite_par_user }}</p>
 
-            {% if sponsor.url_photos %}
-              <img src="{{ sponsor.url_photos }}" alt="{{ sponsor.nom_sponsor }}" class="img-fluid mt-4" style="max-width: 100%; height: auto;">
-            {% endif %}
+          {% if sponsor.url_photos %}
+            <img src="{{ sponsor.url_photos }}" alt="{{ sponsor.nom_sponsor }}" class="img-fluid mt-4" style="max-width: 100%; height: auto;">
+          {% endif %}
 
-            <a href="{% url 'spons_list' %}" class="btn btn-outline-secondary btn-lg mt-4">Back to List</a>
+          <!-- Affichage du QR code -->
+          <div class="mt-4">            
+            <img src="{{ qr_code_base64 }}" alt="QR Code pour {{ sponsor.nom_sponsor }}" class="img-fluid" style="max-width: 100%; height: auto;">
           </div>
+
+          <a href="{% url 'spons_list' %}" class="btn btn-outline-secondary btn-lg mt-4">Back to List</a>
         </div>
       </div>
-    </section>
-  </main>
-  {% endblock %}
+    </div>
+  </section>
+</main>
+{% endblock %}
 
   <!-- Footer -->
   <footer id="footer" class="footer dark-background">
