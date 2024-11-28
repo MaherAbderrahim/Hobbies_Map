@@ -11,12 +11,27 @@ from .forms import SponsorForm
 def superuser_required(view_func):
     return user_passes_test(lambda u: u.is_superuser)(view_func)
 
-# Liste des sponsors
 @superuser_required
 def sponsor_list(request):
     print(f"Utilisateur connecté : {request.user}")  # Affiche l'utilisateur connecté dans la console
+
+    # Récupérer les paramètres de recherche et de filtrage
+    search_query = request.GET.get('search', '')
+    price_filter = request.GET.get('price', '')
+
+    # Filtrer les sponsors par nom
     sponsors = Sponsor.objects.all()
-    return render(request, 'Sponsor/spons_list.html', {'sponsors': sponsors})
+    if search_query:
+        sponsors = sponsors.filter(nom_sponsor__icontains=search_query)
+
+    # Filtrer les sponsors par prix (supérieur)
+    if price_filter:
+        try:
+            price_value = float(price_filter)
+            sponsors = sponsors.filter(prix_sponsor__gte=price_value)  # Filtre les sponsors dont le prix est supérieur ou égal à price_value
+        except ValueError:
+            pass  # Ignore si le filtre de prix n'est pas un nombre valide
+    return render(request, 'Sponsor/spons_list.html', {'sponsors': sponsors, 'search_query': search_query, 'price_filter': price_filter})
 
 from io import BytesIO  # Assurez-vous d'importer BytesIO
 
@@ -68,3 +83,5 @@ def sponsor_delete(request, pk):
         sponsor.delete()
         return redirect('spons_list')
     return render(request, 'Sponsor/spons_delete.html', {'sponsor': sponsor})
+
+
