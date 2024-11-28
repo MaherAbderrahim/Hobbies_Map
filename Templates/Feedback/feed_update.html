@@ -50,7 +50,7 @@
     </div>
   </header>
 
-<main class="main">
+  <main class="main">
 
     <!-- Hero Section -->
     <section id="hero" class="hero section dark-background">
@@ -58,8 +58,8 @@
       <div class="container">
         <div class="row gy-4 d-flex justify-content-between">
           <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
-            <h2> Update Your Feedback</h2>
-            <h4>Please make changes to your feedback below.</h4>
+            <h2> Update Your Feedback if needed.</h2>
+            <h4>Always share your thoughts, suggestions, or any issues you’ve encountered.</h4>
          </div>
           <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
             <img src="{% static 'img/hero-img.svg' %}" class="img-fluid mb-3 mb-lg-0" alt="">
@@ -68,65 +68,84 @@
       </div>
     </section><!-- /Hero Section -->
 
-    <!-- Feedback Update Form Section -->
-    <section id="feedback-form" class="feedback-form section">
-        <div class="container">
-            <form method="POST" action="{% url 'feedback_update' feedback.id %}" data-aos="fade-up" data-aos-delay="200">
-                {% csrf_token %}
-                
-                <!-- Debugging output to check feedback object -->
-                <p>Feedback: {{ feedback }}</p> <!-- This will help verify if feedback is passed correctly -->
-                
-                <div class="row gy-4">
-                    <!-- Status -->
-                    <div class="col-lg-6 col-md-12">
-                        <label for="statut" class="form-label">Status</label>
-                        <select id="statut" name="statut" class="form-control" required>
-                            <option value="open" {% if feedback.statut == 'open' %}selected{% endif %}>Open</option>
-                            <option value="in_progress" {% if feedback.statut == 'in_progress' %}selected{% endif %}>In Progress</option>
-                            <option value="closed" {% if feedback.statut == 'closed' %}selected{% endif %}>Closed</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Feedback Type -->
-                    <div class="col-lg-6 col-md-12">
-                        <label for="feedback_type" class="form-label">Feedback Type</label>
-                        <select id="feedback_type" name="feedback_type" class="form-control" required>
-                            <option value="general" {% if feedback.feedback_type == 'general' %}selected{% endif %}>General Feedback</option>
-                            <option value="suggestion" {% if feedback.feedback_type == 'suggestion' %}selected{% endif %}>Suggestion</option>
-                            <option value="issue" {% if feedback.feedback_type == 'issue' %}selected{% endif %}>Issue</option>
-                        </select>
-                    </div>
-    
-                    <!-- Feedback Description -->
-                    <div class="col-lg-6 col-md-12">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea id="description" name="description_feedback" rows="4" class="form-control" placeholder="Please describe your feedback" required>{{ feedback.description_feedback }}</textarea>
-                    </div>
-    
-                    <!-- Need Admin Attention -->
-                    <div class="col-lg-6 col-md-12">
-                        <label for="need_admin" class="form-label">Need Admin Attention</label>
-                        <select id="need_admin" name="need_admin" class="form-control" required>
-                            <option value="yes" {% if feedback.need_admin == 'yes' %}selected{% endif %}>Yes</option>
-                            <option value="no" {% if feedback.need_admin == 'no' %}selected{% endif %}>No</option>
-                        </select>
-                    </div>
-    
-                    <!-- Buttons -->
-                    <div class="col-lg-6 col-md-12">
-                        <button type="submit" class="btn btn-primary w-100">Update Feedback</button>
-                    </div>
-                    <div class="col-lg-6 col-md-12">
-                        <!-- Cancel Button -->
-                        <button type="button" class="btn btn-secondary w-100" onclick="window.history.back();">Cancel</button>
-                    </div>
-                </div>
-            </form>
+     <!-- Feedback Update Form Section -->
+<section id="feedback-form" class="feedback-form section">
+  <form method="POST" action="{% url 'feedback:feedback_update' feedback.id %}" data-aos="fade-up" data-aos-delay="200">
+    {% csrf_token %}
+    <div class="row gy-4">
+        <!-- Status -->
+        <div class="col-lg-6 col-md-12">
+            <label for="status" class="form-label">Status</label>
+            {{ form.status }}
         </div>
-    </section>
+        
+        <!-- Feedback Type -->
+        <div class="col-lg-6 col-md-12">
+            <label for="feedback_type" class="form-label">Feedback Type</label>
+            {{ form.feedback_type }}
+        </div>
+        
+        <!-- Feedback Description -->
+        <div class="col-lg-6 col-md-12">
+            <label for="description_feedback" class="form-label">Description</label>
+            {{ form.description_feedback }}
+        </div>
+        
+        <!-- Need Admin Attention -->
+        <div class="col-lg-6 col-md-12">
+            <label for="need_admin" class="form-label">Need Admin Attention</label>
+            {{ form.need_admin }}
+        </div>
+        
+        <!-- Rating -->
+        <div class="col-lg-6 col-md-12">
+          <label for="rating" class="form-label">Rating</label>
+          <div id="rating-stars">
+              {% for i in rating_range %}
+                  <label>
+                      <input type="radio" name="rating" value="{{ i }}" 
+                             class="star-input" 
+                             {% if form.rating.value|stringformat:"d" == i|stringformat:"d" %}checked{% endif %}>
+                      <span class="star" data-value="{{ i }}">&#9733;</span>
+                  </label>
+              {% endfor %}
+          </div>
+      </div>
+      <style>
+        #rating-stars {
+            display: flex;
+            gap: 5px;
+        }
+        #rating-stars .star {
+            font-size: 24px;
+            color: lightgray;
+            cursor: pointer;
+        }
+        #rating-stars input[type="radio"] {
+            display: none; /* Hide the radio buttons */
+        }
+        #rating-stars .star:hover,
+        #rating-stars .star:hover ~ .star {
+            color: gold;
+        }
+        #rating-stars input[type="radio"]:checked + .star {
+            color: gold;
+        }
+    </style>
     
-</main>
+      
+        
+        <!-- Submit Button -->
+        <div class="col-lg-6 col-md-12">
+            <button type="submit" class="btn btn-primary w-100">Update Feedback</button>
+        </div>
+    </div>
+</form>
+
+</section>
+    
+
+  </main>
 
   <footer id="footer" class="footer dark-background">
     <div class="container footer-top">
@@ -166,27 +185,34 @@
                 </ul>
             </div>
 
-            <div class="col-lg-3 col-md-12 footer-contact">
+            <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
                 <h4>Contact Us</h4>
-                <p><i class="bi bi-geo-alt"></i> 1234 Some Street, Some City, Country</p>
-                <p><i class="bi bi-envelope"></i> support@hobbiesmap.com</p>
-                <p><i class="bi bi-phone"></i> +1 234 567 890</p>
+                <p>Ariana Soghra, Tunisia</p>
+                <p>Tunisia</p>
+                <p class="mt-4"><strong>Phone:</strong> <span>+216 70 528 759</span></p>
+                <p><strong>Email:</strong> <span>info@hobbiesmap.tn</span></p>
             </div>
-        </div>
-    </div>
-
-    <div class="footer-bottom">
-        <div class="container">
-            <p>&copy; 2024 HobbiesMAP. All Rights Reserved</p>
         </div>
     </div>
   </footer>
 
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
   <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
   <script src="{% static 'vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'vendor/purecounter/purecounter_vanilla.js' %}"></script>
   <script src="{% static 'vendor/glightbox/js/glightbox.min.js' %}"></script>
   <script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
+
+  <!-- Main JS File -->
   <script src="{% static 'js/main.js' %}"></script>
 
 </body>
+
 </html>
