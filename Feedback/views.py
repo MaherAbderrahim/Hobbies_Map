@@ -2,20 +2,40 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Feedback
 from .forms import FeedbackForm
 from django.contrib import messages
+from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from .models import Utilisateur
-
-
-# feedback/views.py
+from django.db.models import Q
 
 @login_required
 def feedback_list(request):
-    # Retrieve feedbacks for the logged-in user
-    feedbacks = Feedback.objects.filter(utilisateur=request.user)
-    print("Retrieved feedbacks:", feedbacks)  # Debugging line to ensure feedbacks are fetched correctly
-    print("Current logged-in user:", request.user)
-    
-    return render(request, 'user/feedback.html', {'feedbacks': feedbacks})
+    # Get all feedbacks for the logged-in user
+    feedbacks = Feedback.objects.filter(utilisateur=request.user).order_by('-created_at')
+
+    # Search and filter
+    search_query = request.GET.get('q', '')
+    status_filter = request.GET.get('status', '')
+
+    if search_query:
+        feedbacks = feedbacks.filter(
+            Q(description_feedback__icontains=search_query) |
+            Q(feedback_type__icontains=search_query)
+        )
+
+    if status_filter:
+        feedbacks = feedbacks.filter(status=status_filter)
+
+    paginator = Paginator(feedbacks, 5)  # Show 5 feedbacks per page
+    page_number = request.GET.get('page')
+    page_feedbacks = paginator.get_page(page_number)
+
+    context = {
+        'feedbacks': page_feedbacks,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'statuses': Feedback._meta.get_field('status').choices,  # Dynamically get status choices
+        'star_range': range(1, 6),  # Add the range for stars
+    }
+    return render(request, 'user/feedback.html', context)
 
 
 @login_required
@@ -24,44 +44,47 @@ def feedback_create(request):
         form = FeedbackForm(request.POST)
         if form.is_valid():
             feedback = form.save(commit=False)
-            feedback.utilisateur = request.user  # Associate feedback with the logged-in user
+            feedback.utilisateur = request.user  # Directly assign `request.user` as it is a `Utilisateur`
             feedback.save()
-            return redirect('feedback_list')  # Redirect to the list page
-
+            messages.success(request, "Feedback submitted successfully.")
+            return redirect('feedback:feedback')
     else:
         form = FeedbackForm()
+        # Pass the range to the context
+    context = {
+        'form': form,
+        'rating_range': range(1, 6),
+    }
+    return render(request, 'Feedback/feed_form.html', context)
 
-    return render(request, 'Feedback/feed_form.html', {'form': form})
 
 @login_required
 def feedback_update(request, feedback_id):
-    # Get the feedback to be updated (ensure that the feedback belongs to the logged-in user)
     feedback = get_object_or_404(Feedback, pk=feedback_id, utilisateur=request.user)
-    
-    # If the form is submitted, process the update
-    if request.method == "POST":
+    if request.method == 'POST':
         form = FeedbackForm(request.POST, instance=feedback)
         if form.is_valid():
-            form.save()
+            form.save()  # Save the updated feedback
             messages.success(request, "Feedback updated successfully.")
-            return redirect('feedback_list')  # Redirect to the feedback list after successful update
+            return redirect('feedback:feedback')  # Redirect to feedback list page (change 'feedback_list' to 'feedback')
     else:
-        # If not POST, display the form with the current data
         form = FeedbackForm(instance=feedback)
+    context = {
+        'form': form,
+        'feedback': feedback,
+        'rating_range': range(1, 6),
+    }
     
-    # Pass the form and feedback to the template context
-    return render(request, 'Feedback/feed_update.html', {'form': form, 'feedback': feedback})
+    return render(request, 'Feedback/feed_update.html', context)
+
+
+
 
 
 @login_required
 def feedback_delete(request, feedback_id):
-    feedback = get_object_or_404(Feedback, pk=feedback_id)
-    
-    # Check if the feedback belongs to the logged-in user
-    if feedback.utilisateur != request.user:
-        return redirect('feedback_list')  # Redirect back to the feedback list page if not authorized
-    
+    feedback = get_object_or_404(Feedback, pk=feedback_id, utilisateur=request.user)
     feedback.delete()
     messages.success(request, "Feedback deleted successfully.")
-    return redirect('feedback_list')  # Corrected redirection to feedback list after deletion
+    return redirect('feedback:feedback')  # Update this if needed to match your actual URL name
 

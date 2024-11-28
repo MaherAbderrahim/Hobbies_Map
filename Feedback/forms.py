@@ -4,10 +4,13 @@ from .models import Feedback
 class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
-        fields = ['statut', 'description_feedback', 'need_admin'] # Les champs que vous souhaitez dans le formulaire
+        fields = ['status', 'feedback_type', 'description_feedback', 'need_admin','rating']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4, 'cols': 40}),  # Exemple de personnalisation pour le champ de texte
+            'description_feedback': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Please describe your feedback'}),
+            'rating': forms.Select(choices=[(i, f"{i} ★") for i in range(1, 6)]),  # Dropdown with stars
+
         }
+        
 
     # Vous pouvez ajouter des méthodes de validation supplémentaires si nécessaire
     def clean_description_feedback(self):
