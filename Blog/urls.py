@@ -13,4 +13,10 @@ urlpatterns = [
     path('updateclass/<int:pk>', UpdatePoste.as_view() , name="updateClass"),
     path('deleteclass/<int:pk>', DeletePoste.as_view() , name="deleteClass"),
     
+
+    path('notifications/', notifications, name='notifications'),
+    
+    
+    path('like/<int:post_id>/', toggle_like, name='toggle_like'),
+
 ]

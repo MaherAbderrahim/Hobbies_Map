@@ -18,7 +18,6 @@
 
 
 
-
 .main-content {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
@@ -706,6 +705,7 @@ summary::-webkit-details-marker {
 }
 
 .heart-icon {
+  
   width: 30px;
   height: 30px;
   position: relative;
@@ -715,6 +715,7 @@ summary::-webkit-details-marker {
   display: flex;
   align-items: center;
   justify-content: center;
+   /* Resets all inherited button styles */
 }
 
 .heart-icon::before {
@@ -776,4 +777,18 @@ summary::-webkit-details-marker {
   font-size: 1em;
   color: #555;
   line-height: 1.5;
+}
+#notifications-section {
+  position: relative;
+  display: inline-block;
+  background-color: rgb(235, 235, 235);
+  border-radius: 10px;
+}
+
+.notification li {
+  font-size: medium;
+  
+  
+  border-radius: 10px;
+  margin-top: 20px;
 }
