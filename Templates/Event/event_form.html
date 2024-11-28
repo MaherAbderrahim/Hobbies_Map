@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if event %}Modifier{% else %}Modifier{% endif %} un événement</title>
+    <title>{% if event %}Modifier{% else %}Ajouter{% endif %} un événement</title>
+
+    <!-- Leaflet.js CDN for the map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
     <style>
         /* Basic styling */
         body {
@@ -15,6 +20,7 @@
             margin: 0;
             background-color: #f4f4f9;
         }
+
         .container {
             background-color: #fff;
             padding: 2rem;
@@ -23,33 +29,40 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
+
         h1 {
             text-align: center;
             font-size: 1.5rem;
             color: #333;
         }
+
         form {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
+
         .form-field {
             display: flex;
             flex-direction: column;
         }
+
         label {
             font-weight: bold;
             margin-bottom: 0.5rem;
         }
+
         input[type="text"],
         input[type="date"],
-        select,
+        input[type="url"],
+        input[type="number"],
         textarea {
             padding: 0.75rem;
             font-size: 1rem;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
         button {
             padding: 0.75rem;
             font-size: 1rem;
@@ -60,9 +73,11 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         .cancel-link {
             display: inline-block;
             text-align: center;
@@ -75,24 +90,104 @@
             border-radius: 4px;
             transition: background-color 0.3s ease;
         }
+
         .cancel-link:hover {
             background-color: #f0f0f0;
+        }
+
+        /* Add a size for the map */
+        #map {
+            height: 400px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>{% if event %}Modifier{% else %}Modifier{% endif %} un événement</h1>
-    <form method="POST">
+    <h1>{% if event %}Modifier{% else %}Ajouter{% endif %} un événement</h1>
+    <form method="POST" action="{% url 'event_update' event.id %}">
         {% csrf_token %}
         <div class="form-field">
-            {{ form.as_p }}
+            <p>
+                <label for="id_nom_event">Nom de l'événement:</label>
+                <input type="text" name="nom_event" value="{{ event.nom_event }}" maxlength="100" required id="id_nom_event">
+            </p>
+
+            <p>
+                <label for="id_image_url">URL de l'image:</label>
+                <input type="url" name="image_url" value="{{ event.image_url }}" maxlength="200" required id="id_image_url">
+            </p>
+
+            <p>
+                <label for="id_description_event">Description de l'événement:</label>
+                <textarea name="description_event" cols="40" rows="10" required id="id_description_event">{{ event.description_event }}</textarea>
+            </p>
+
+            <p>
+                <label for="id_date_event">Date de l'événement:</label>
+                <input type="date" name="date_event" value="{{ event.date_event }}" required id="id_date_event">
+            </p>
+
+            <p>
+                <label for="id_prix">Prix:</label>
+                <input type="number" name="prix" value="{{ event.prix }}" step="0.01" required id="id_prix">
+            </p>
+
+            <p>
+                <label for="id_nombre_places_disponibles">Nombre de places disponibles:</label>
+                <input type="number" name="nombre_places_disponibles" value="{{ event.nombre_places_disponibles }}" required id="id_nombre_places_disponibles">
+            </p>
+
+            <p>
+                <label for="id_latitude">Latitude:</label>
+                <input type="number" name="latitude" value="{{ event.latitude }}" step="0.000001" id="id_latitude" readonly>
+            </p>
+
+            <p>
+                <label for="id_longitude">Longitude:</label>
+                <input type="number" name="longitude" value="{{ event.longitude }}" step="0.000001" id="id_longitude" readonly>
+            </p>
         </div>
+
+        <!-- Add a div for the map -->
+        <div class="form-field">
+            <label for="map">Choisir un emplacement sur la carte</label>
+            <div id="map"></div>  <!-- The map container -->
+        </div>
+
         <button type="submit">Enregistrer</button>
         <a href="{% url 'event_list' %}" class="cancel-link">Annuler</a> <!-- Cancel button to go back to the event list -->
     </form>
 </div>
+
+<!-- JavaScript for handling the map interaction -->
+<script>
+    // Get the latitude and longitude values from the Django context
+    var latitude = {{ event.latitude|default:48.8566 }};  // Default to Paris if no coordinates
+    var longitude = {{ event.longitude|default:2.3522 }};  // Default to Paris if no coordinates
+
+    // Initialize the map with the provided or default coordinates
+    var map = L.map('map').setView([latitude, longitude], 13);
+
+    // Add the tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Create a draggable marker at the initial coordinates
+    var marker = L.marker([latitude, longitude], { draggable: true }).addTo(map);
+
+    // Update the hidden inputs with the new coordinates when the marker is dragged
+    marker.on('dragend', function() {
+        var lat = marker.getLatLng().lat;
+        var lng = marker.getLatLng().lng;
+
+        // Update the form fields with the new coordinates
+        document.getElementById('id_latitude').value = lat.toFixed(6);
+        document.getElementById('id_longitude').value = lng.toFixed(6);
+    });
+</script>
 
 </body>
 </html>

@@ -1,0 +1,13 @@
+Hello {{ user.username }},
+
+We are excited to announce a new event on Hobbies Map!
+
+Event Details:
+Name: {{ event.name }}
+Date: {{ event.date }}
+Location: {{ event.location }}
+
+Don't miss out! Visit the site to learn more.
+
+Best regards,
+The Hobbies Map Team
