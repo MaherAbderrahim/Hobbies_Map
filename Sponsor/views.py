@@ -6,6 +6,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import user_passes_test
 from .models import Sponsor
 from .forms import SponsorForm
+from .api_groq import ameliorer_description  # Assurez-vous d'importer votre fonction
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+
 
 # Décorateur pour vérifier si l'utilisateur est un superuser
 def superuser_required(view_func):
@@ -50,30 +55,86 @@ def sponsor_detail(request, pk):
 
     return render(request, 'Sponsor/spons_details.html', {'sponsor': sponsor, 'qr_code_base64': qr_code_base64})
 
+
+@csrf_exempt  # Assurez-vous que cette vue peut accepter des requêtes POST
+def improve_description(request):
+    if request.method == 'POST':
+        # Récupérer la description envoyée
+        data = json.loads(request.body)
+        description_utilisateur = data.get('description')
+
+        # Appeler votre fonction d'amélioration de la description ici
+        improved_description = ameliorer_description(description_utilisateur)  # La fonction pour améliorer la description
+        
+        # Retourner la description améliorée en JSON
+        return JsonResponse({'improved_description': improved_description})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
 # Création d'un sponsor
 @superuser_required
 def sponsor_create(request):
+    chat_response = ''
     if request.method == 'POST':
         form = SponsorForm(request.POST)
+        
+        # Si l'utilisateur demande à améliorer la description
+        if 'improve_description' in request.POST:
+            description = request.POST.get('description_sponsor', '')  # Obtenez la description du formulaire
+            if description:
+                chat_response = ameliorer_description(description)  # Appeler la fonction pour améliorer la description
+
         if form.is_valid():
-            form.save()
+            sponsor = form.save()  # Sauvegarder le sponsor
+
+            # Si une réponse de l'API est générée, la mettre à jour
+            if chat_response:
+                sponsor.description_sponsor = chat_response
+                sponsor.save()
+
             return redirect('spons_list')
     else:
         form = SponsorForm()
-    return render(request, 'Sponsor/spons_form.html', {'form': form})
+
+    return render(request, 'Sponsor/spons_form.html', {
+        'form': form,
+        'chat_response': chat_response,  # Passer la réponse à votre template
+    })
+
 
 # Modification d'un sponsor
 @superuser_required
 def sponsor_update(request, pk):
     sponsor = get_object_or_404(Sponsor, pk=pk)
+    chat_response = ''
+    
     if request.method == 'POST':
         form = SponsorForm(request.POST, instance=sponsor)
+        
+        # Si l'utilisateur demande à améliorer la description
+        if 'improve_description' in request.POST:
+            description = request.POST.get('description_sponsor', '')  # Obtenez la description du formulaire
+            if description:
+                chat_response = ameliorer_description(description)  # Appeler la fonction pour améliorer la description
+
         if form.is_valid():
-            form.save()
+            form.save()  # Sauvegarder les modifications du sponsor
+
+            # Si une réponse de l'API est générée, la mettre à jour
+            if chat_response:
+                sponsor.description_sponsor = chat_response
+                sponsor.save()
+
             return redirect('spons_list')
     else:
         form = SponsorForm(instance=sponsor)
-    return render(request, 'Sponsor/spons_form.html', {'form': form})
+
+    return render(request, 'Sponsor/spons_form.html', {
+        'form': form,
+        'chat_response': chat_response,  # Passer la réponse à votre template
+    })
+
+
 
 # Suppression d'un sponsor
 @superuser_required
