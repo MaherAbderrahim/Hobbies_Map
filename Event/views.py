@@ -3,6 +3,10 @@ from django.contrib.auth.decorators import login_required  # Import the decorato
 from .models import Event, User_Event
 from .forms import EventForm
 from django.db.models import Q  # For complex queries
+from .api_groq import ameliorer_description  # Assurez-vous d'importer votre fonction
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
 
 @login_required
 def event_list(request):
@@ -29,6 +33,23 @@ def event_list(request):
         events = events.filter(prix__lte=price_max)  # Price less than or equal to
 
     return render(request, 'event/event_list.html', {'events': events})
+
+
+@csrf_exempt  # Assurez-vous que cette vue peut accepter des requêtes POST
+def improve_description(request):
+    if request.method == 'POST':
+        # Récupérer la description envoyée
+        data = json.loads(request.body)
+        description_utilisateur = data.get('description')
+
+        # Appeler votre fonction d'amélioration de la description ici
+        improved_description = ameliorer_description(description_utilisateur)  # La fonction pour améliorer la description
+        
+        # Retourner la description améliorée en JSON
+        return JsonResponse({'improved_description': improved_description})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
 
 @login_required
 def event_create(request):
