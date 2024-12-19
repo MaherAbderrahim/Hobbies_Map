@@ -15,12 +15,7 @@
 
 <!-- Navbar -->
 <header id="header" class="header d-flex align-items-center fixed-top" style="background-color: rgb(35, 56, 250);height: 60px;">
-  
         <div class="container-fluid container-xl position-relative d-flex align-items-center">
-      
-          
-      
-            
               <a href="{% url 'user:home' %}" class="logo d-flex me-auto">
                 <!-- Uncomment the line below if you also wish to use an image logo -->
                 <!-- <img src="{% static 'img/logo.png' %}" alt=""> -->
@@ -30,8 +25,11 @@
               <nav id="navmenu" class="navmenu">
                 <ul>
                   <li><a href="{% url 'user:home' %}" class="active">Home</a></li>
-                  <li><a href="{% url 'user:feedback' %}">Feedback</a></li>
+                  <li><a href="{% url 'feedback:feedback' %}">Feedback</a></li>          
                   <li><a href="{% url 'list' %}">Blog</a></li>
+                  <li><a href="{% url 'spons_list' %}">Sponsors</a></li>
+                  <li><a href="{%url 'event_list' %}">Events</a></li>
+                  <li><a href="{%url 'act_list' %}">Activities</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
               </nav>
@@ -45,20 +43,51 @@
 
 <!-- Main Content -->
 <div class="w3-container w3-content" style="max-width:800px;margin-top:80px">
-    <div class="w3-card w3-round w3-white w3-padding">
-        <h2 class="w3-center">Update Event</h2>
-        <form method="post" class="w3-container">
-            {% csrf_token %}
-            <div class="mb-3">
-                {{ form.as_p }}
-            </div>
-            <div class="d-flex justify-content-between mt-4">
-                <button type="submit" class="btn btn-primary">Update Event</button>
-                <a href="{% url 'event_list' %}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
-    </div>
+  <div class="w3-card w3-round w3-white w3-padding">
+      <h2 class="w3-center">Update Event</h2>
+      <form method="post" class="w3-container">
+          {% csrf_token %}
+          <div class="mb-3">
+              {{ form.as_p }}
+          </div>
+
+          <!-- Bouton pour améliorer la description -->
+          <button type="button" id="improveDescriptionBtn" class="btn btn-outline-success btn-lg mt-3">Improve Description</button>
+
+          <div class="d-flex justify-content-between mt-4">
+              <button type="submit" class="btn btn-primary">Update Event</button>
+              <a href="{% url 'event_list' %}" class="btn btn-secondary">Cancel</a>
+          </div>
+      </form>
+
+      <!-- Script pour intercepter le clic sur le bouton "Improve Description" -->
+      <script>
+        document.getElementById('improveDescriptionBtn').addEventListener('click', function() {
+            // Récupérer la description actuelle (supposée être dans un champ textarea nommé 'description')
+            var description = document.querySelector("textarea[name='description']").value;
+        
+            // Appeler l'API pour améliorer la description
+            fetch('{% url "improve_description" %}', {  
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ description: description })
+            })
+            .then(response => response.json())
+            .then(data => {
+              // Mettre à jour le champ de texte avec la description améliorée
+              document.querySelector("textarea[name='description']").value = data.improved_description;
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        });
+      </script>
+  </div>
 </div>
+
 
 <!-- Include Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
