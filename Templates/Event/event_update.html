@@ -59,32 +59,6 @@
               <a href="{% url 'event_list' %}" class="btn btn-secondary">Cancel</a>
           </div>
       </form>
-
-      <!-- Script pour intercepter le clic sur le bouton "Improve Description" -->
-      <script>
-        document.getElementById('improveDescriptionBtn').addEventListener('click', function() {
-            // Récupérer la description actuelle (supposée être dans un champ textarea nommé 'description')
-            var description = document.querySelector("textarea[name='description']").value;
-        
-            // Appeler l'API pour améliorer la description
-            fetch('{% url "improve_description" %}', {  
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-              },
-              body: JSON.stringify({ description: description })
-            })
-            .then(response => response.json())
-            .then(data => {
-              // Mettre à jour le champ de texte avec la description améliorée
-              document.querySelector("textarea[name='description']").value = data.improved_description;
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
-        });
-      </script>
   </div>
 </div>
 

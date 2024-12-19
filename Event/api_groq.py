@@ -12,7 +12,7 @@ def ameliorer_description(description_utilisateur: str) -> str:
     url = 'http://127.0.0.1:5000/chat'
 
     # Création du prompt en intégrant la description de l'utilisateur
-    prompt = f"Dans le cadre d'une application, peux-tu améliorer cette description d evenement pour une activite qui doit être brève et concise ? Donne-moi juste la description finale en anglais sous forme de paragraphe, sans introduction ni explication : {description_utilisateur}"
+    prompt = f"Dans le cadre d'une application, peux-tu améliorer cette description d evenement pour une activite qui doit être brève et concise et sans montionnele sujet de sponsoring? Donne-moi juste la description finale en anglais sous forme de paragraphe, sans introduction ni explication :{description_utilisateur}"
 
     # Structure de la requête POST avec le prompt
     data = {
@@ -50,3 +50,35 @@ def ameliorer_description(description_utilisateur: str) -> str:
         # Si la réponse échoue, retourner un message d'erreur
         return f"Erreur {response.status_code}: {response.text}"
 
+
+def generer_image(description_event: str) -> str:
+    """
+    Envoie une requête à l'API Flask pour générer et uploader une image.
+
+    :param description_event: La description de l'événement utilisée comme prompt
+    :return: L'URL de l'image générée ou un message d'erreur
+    """
+    # URL de l'API Flask pour la génération d'image
+    print("je suis dans l'entre de l'api generer_image")
+    api_url = 'http://127.0.0.1:5000/generate_image'
+    
+    # Structure de la requête POST
+    data = {
+        'prompt': f"{description_event}"
+    }
+    
+    try:
+        # Envoi de la requête POST
+        response = requests.post(api_url, json=data)
+        response.raise_for_status()  # Lève une exception si le code de statut est 4xx ou 5xx
+        response_data = response.json()
+
+        # Vérification du succès de la réponse
+        if response.status_code == 200 and 'image_url' in response_data:
+            return response_data['image_url']
+        else:
+            print(f"Error in response: {response_data}")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Erreur lors de l'appel à l'API Flask : {e}")
+        return None

@@ -8,5 +8,7 @@ urlpatterns = [
     path('<int:id>/', views.event_detail, name='event_detail'),
     path('<int:id>/update/', views.event_update, name='event_update'),  
     path('<int:id>/delete/', views.event_delete, name='event_delete'),
+    path('generate-image/', views.generate_image, name='generate_image'),
+
 ]
 

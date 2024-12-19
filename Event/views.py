@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required  # Import the decorator
+from django.contrib.auth.decorators import login_required
+
 from .models import Event, User_Event
 from .forms import EventForm
 from django.db.models import Q  # For complex queries
-from .api_groq import ameliorer_description  # Assurez-vous d'importer votre fonction
+from .api_groq import ameliorer_description,generer_image  # Assurez-vous d'importer votre fonction
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
@@ -23,7 +24,7 @@ def event_list(request):
     if search_query:
         events = events.filter(
             Q(nom_event__icontains=search_query) | 
-            Q(description_event__icontains=search_query)
+            Q(data__icontains=search_query)
         )
     if date_filter:
         events = events.filter(date_event__date=date_filter)  # Filter by exact date
@@ -50,6 +51,30 @@ def improve_description(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+@csrf_exempt  # Permet à cette vue d'accepter des requêtes POST sans vérification CSRF
+def generate_image(request):
+    """
+    Vue Django pour générer et retourner une image basée sur une description.
+    """
+    print("je suis dans la vue generate_image")
+    if request.method == 'POST':
+        # Récupérer les données envoyées dans la requête
+        data = json.loads(request.body)
+        print("data = ",data)
+
+        
+        if not data:
+            return JsonResponse({'error': "Le champ 'description' est requis"}, status=400)
+        
+        # Appeler la fonction pour générer une image
+        image_url = generer_image(data)
+        
+        if image_url:
+            return JsonResponse({'image_url': image_url})
+        else:
+            return JsonResponse({'error': "La génération ou l'upload de l'image a échoué"}, status=500)
+
+    return JsonResponse({'error': 'Requête invalide'}, status=400)
 
 @login_required
 def event_create(request):
@@ -61,6 +86,9 @@ def event_create(request):
     else:
         form = EventForm()
     return render(request, 'event/event_form.html', {'form': form})
+
+
+
 
 from django.shortcuts import render, get_object_or_404
 from .models import Event
