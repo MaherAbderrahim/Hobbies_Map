@@ -22,7 +22,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 
 import joblib  # for loading the model
-from tensorflow.keras.models import load_model
+from tensorflow.keras.models import load_model  # for loading the model
 # Load the trained model and vectorizer
 model = load_model('toxic_comment_prediction_model.h5')
 vectorizer = joblib.load('tfidf_vectorizer.pkl')

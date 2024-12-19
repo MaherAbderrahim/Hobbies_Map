@@ -5,6 +5,11 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+import joblib
+
+vectorizer2 = joblib.load('vectorizer2.pkl')
+model2=joblib.load('toxic_poste_model.pkl')
+
 
 @login_required
 def feedback_list(request):
@@ -42,15 +47,51 @@ def feedback_list(request):
 def feedback_create(request):
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
+        contenu = request.POST.get('description_feedback', None)
+        
+        # Debugging logs
+        print("Submitted feedback:", contenu)
+        
+        toxic = 0  # Default to non-toxic
+        if contenu:
+            try:
+                # Preprocess the text (vectorization)
+                text2 = vectorizer2.transform([contenu])
+                
+                # Get the model's prediction
+                prediction2 = model2.predict(text2)
+                print("Prediction score:", prediction2[0])
+                
+                # Determine toxicity based on the model's prediction
+                toxic = 1 if prediction2[0] > 0.5 else 0
+            except Exception as e:
+                print("Error in toxicity prediction:", str(e))
+                form.add_error(None, "An error occurred while analyzing the feedback. Please try again later.")
+        
+        if toxic == 1:
+            # Add error to the form for toxic feedback
+            form.add_error('description_feedback', f'This feedback is toxic  and cannot be submitted.')
+            context = {
+                'form': form,
+                'rating_range': range(1, 6),
+                'alert_message': f"This feedback is toxic and cannot be submitted.Please be polite",
+            }
+            return render(request, 'Feedback/feed_form.html', context)
+        
+        # Check if the form is valid
         if form.is_valid():
             feedback = form.save(commit=False)
-            feedback.utilisateur = request.user  # Directly assign `request.user` as it is a `Utilisateur`
+            feedback.utilisateur = request.user  # Assign the logged-in user
             feedback.save()
             messages.success(request, "Feedback submitted successfully.")
             return redirect('feedback:feedback')
+        else:
+            # Form validation errors
+            print("Form errors:", form.errors)
     else:
         form = FeedbackForm()
-        # Pass the range to the context
+
+    # Render the form with additional context
     context = {
         'form': form,
         'rating_range': range(1, 6),
@@ -58,24 +99,55 @@ def feedback_create(request):
     return render(request, 'Feedback/feed_form.html', context)
 
 
+
 @login_required
 def feedback_update(request, feedback_id):
     feedback = get_object_or_404(Feedback, pk=feedback_id, utilisateur=request.user)
+    alert_message = None  # Initialize alert_message to None
+
     if request.method == 'POST':
         form = FeedbackForm(request.POST, instance=feedback)
-        if form.is_valid():
-            form.save()  # Save the updated feedback
-            messages.success(request, "Feedback updated successfully.")
-            return redirect('feedback:feedback')  # Redirect to feedback list page (change 'feedback_list' to 'feedback')
+        contenu = request.POST.get('description_feedback', None)
+
+        toxic = 0  # Default to non-toxic
+        if contenu:
+            try:
+                # Preprocess the text (vectorization)
+                text2 = vectorizer2.transform([contenu])
+                prediction2 = model2.predict(text2)
+                toxic = 1 if prediction2[0] > 0.5 else 0
+            except Exception as e:
+                print("Error in toxicity prediction:", str(e))
+                form.add_error(None, "An error occurred while analyzing the feedback. Please try again later.")
+
+        if toxic == 1:
+            # Add an error for toxic feedback
+            alert_message = "This feedback is toxic and cannot be updated. Please be polite."
+            form.add_error('description_feedback', alert_message)
+        else:
+            # Clear all errors if the feedback is not toxic
+            form.errors.clear()
+            if form.is_valid():
+                # Save the valid feedback
+                updated_feedback = form.save(commit=False)
+                updated_feedback.utilisateur = request.user
+                updated_feedback.save()
+                messages.success(request, "Feedback updated successfully.")
+                return redirect('feedback:feedback')
+
     else:
         form = FeedbackForm(instance=feedback)
+
+    # Render the form with additional context
     context = {
         'form': form,
         'feedback': feedback,
         'rating_range': range(1, 6),
+        'alert_message': alert_message,
     }
-    
     return render(request, 'Feedback/feed_update.html', context)
+
+
 
 
 

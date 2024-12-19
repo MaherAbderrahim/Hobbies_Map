@@ -1,6 +1,12 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import PasswordResetForm
+
 from .models import Utilisateur
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
+#from .forms import CustomPasswordResetForm
+from django.contrib.auth import get_user_model
 
 class UtilisateurCreationForm(UserCreationForm):
     class Meta:
@@ -23,3 +29,22 @@ class UtilisateurLoginForm(AuthenticationForm):
         label="Password",
         widget=forms.PasswordInput(attrs={'class': 'input-field', 'placeholder': 'Password'})
     )
+
+User = get_user_model() 
+
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        max_length=254,
+        widget=forms.EmailInput(attrs={'class': 'input-field', 'placeholder': 'Enter your email'})
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not User.objects.filter(email=email).exists():
+            raise forms.ValidationError("This email address is not registered.")
+        return email
+
+
+
+
+
